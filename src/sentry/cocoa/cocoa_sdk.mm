@@ -168,17 +168,7 @@ String CocoaSDK::get_last_event_id() {
 	return last_uuid;
 }
 
-String CocoaSDK::capture_error(const String &p_type, const String &p_value, Level p_level, const Vector<StackFrame> &p_frames) {
-	// Log automatic error capture (from SentryLogger)
-	print_line("sentry-cocoa: capture_error called (automatic error)");
-	print_line("sentry-cocoa: Error type: " + p_type);
-	print_line("sentry-cocoa: Error value: " + p_value);
-	print_line("sentry-cocoa: Error level: " + String::num_int64(p_level));
-	if (p_frames.size() > 0) {
-		print_line("sentry-cocoa: Error file: " + p_frames[0].filename + ":" + String::num_int64(p_frames[0].lineno));
-	}
-	
-	// Filter out specific error messages
+String CocoaSDK::capture_error(const String &p_type, const String &p_value, Level p_level, const Vector<StackFrame> &p_frames) {	
 	static const String filtered_errors[] = {
 		"NavigationMesh is already baking",
 		"Property agent_max_climb is floored to cell_height voxel units and loses precision",
@@ -250,12 +240,6 @@ Ref<SentryEvent> CocoaSDK::create_event() {
 }
 
 String CocoaSDK::capture_event(const Ref<SentryEvent> &p_event) {
-    // Log event details
-    print_line("sentry-cocoa: iOS capture_event called");
-    print_line("sentry-cocoa: Event message: " + p_event->get_message());
-    print_line("sentry-cocoa: Event level: " + String::num_int64(p_event->get_level()));
-    
-    // Filter out specific error messages
     static const String filtered_errors[] = {
         "NavigationMesh is already baking",
         "Property agent_max_climb is floored to cell_height voxel units and loses precision",
