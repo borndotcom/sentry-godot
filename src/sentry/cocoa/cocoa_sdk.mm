@@ -250,9 +250,33 @@ Ref<SentryEvent> CocoaSDK::create_event() {
 }
 
 String CocoaSDK::capture_event(const Ref<SentryEvent> &p_event) {
+    // Log event details
+    print_line("sentry-cocoa: iOS capture_event called");
+    print_line("sentry-cocoa: Event message: " + p_event->get_message());
+    print_line("sentry-cocoa: Event level: " + String::num_int64(p_event->get_level()));
+    
+    // Filter out specific error messages
+    static const String filtered_errors[] = {
+        "NavigationMesh is already baking",
+        "Property agent_max_climb is floored to cell_height voxel units and loses precision",
+        "use Array, Dictionary or Object",
+        "Result: {}",
+        "Cannot get class"
+    };
+    static const int filtered_errors_count = sizeof(filtered_errors) / sizeof(filtered_errors[0]);
+    
+    String event_message = p_event->get_message();
+    for (int i = 0; i < filtered_errors_count; i++) {
+        if (event_message.contains(filtered_errors[i])) {
+            print_line("sentry-cocoa: Filtering out event: " + filtered_errors[i]);
+            last_uuid = "filtered-event-" + String::num_int64(i);
+            return last_uuid;
+        }
+    }
+    
     Ref<CocoaEvent> native_event = p_event;
 	ObjCSentryEvent *event = (__bridge ObjCSentryEvent *) native_event->get_native_value();
-    
+     
     // Capture the event
     SentryId *eventId = [SentrySDK captureEvent:event];
 
