@@ -1,24 +1,22 @@
-#ifndef NATIVE_EVENT_H
-#define NATIVE_EVENT_H
+#ifndef COCOA_EVENT_H
+#define COCOA_EVENT_H
 
 #include "sentry_event.h"
 
-#include <sentry.h>
-
 namespace sentry {
 
-// Event class that is used with the NativeSDK.
-class NativeEvent : public SentryEvent {
-	GDCLASS(NativeEvent, SentryEvent);
+// Event class that is used with the Cocoa SDK.
+class CocoaEvent : public sentry::SentryEvent {
+	GDCLASS(CocoaEvent, SentryEvent);
 
 private:
-	sentry_value_t native_event;
+	void *cocoa_event;
 
 protected:
 	static void _bind_methods() {}
 
 public:
-	sentry_value_t get_native_value() const { return native_event; }
+    void* get_native_value() const { return cocoa_event; };
 
 	virtual String get_id() const override;
 
@@ -49,11 +47,12 @@ public:
 	virtual void remove_tag(const String &p_key) override;
 	virtual String get_tag(const String &p_key) override;
 
-	NativeEvent(sentry_value_t p_event);
-	NativeEvent();
-	virtual ~NativeEvent() override;
+	CocoaEvent(void* p_event);
+	CocoaEvent();
+	virtual ~CocoaEvent() override;
 };
 
-} // namespace sentry
 
-#endif // NATIVE_EVENT_H
+}
+
+#endif // COCOA_EVENT_H

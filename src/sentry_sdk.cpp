@@ -15,6 +15,10 @@
 #include "sentry/native/native_sdk.h"
 #endif
 
+#ifdef COCOA_SDK
+#include "sentry/cocoa/cocoa_sdk.h"
+#endif
+
 using namespace godot;
 using namespace sentry;
 
@@ -47,6 +51,8 @@ void _fix_unix_executable_permissions(const String &p_path) {
 }
 
 } // unnamed namespace
+
+namespace sentry {
 
 SentrySDK *SentrySDK::singleton = nullptr;
 
@@ -122,8 +128,11 @@ void SentrySDK::_init_contexts() {
 void SentrySDK::_initialize() {
 	sentry::util::print_debug("starting Sentry SDK version " + String(SENTRY_GODOT_SDK_VERSION));
 
-#ifdef NATIVE_SDK
+#if defined(NATIVE_SDK)
 	internal_sdk = std::make_shared<NativeSDK>();
+	enabled = true;
+#elif defined(COCOA_SDK)
+	internal_sdk = std::make_shared<CocoaSDK>();
 	enabled = true;
 #else
 	// Unsupported platform
@@ -252,3 +261,5 @@ SentrySDK::SentrySDK() {
 SentrySDK::~SentrySDK() {
 	singleton = nullptr;
 }
+
+} // namespace sentry
