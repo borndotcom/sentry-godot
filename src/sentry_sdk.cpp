@@ -19,6 +19,10 @@
 #include "sentry/cocoa/cocoa_sdk.h"
 #endif
 
+#ifdef ANDROID_ENABLED
+#include "sentry/android/android_sdk.h"
+#endif
+
 using namespace godot;
 using namespace sentry;
 
@@ -133,6 +137,9 @@ void SentrySDK::_initialize() {
 	enabled = true;
 #elif defined(COCOA_SDK)
 	internal_sdk = std::make_shared<CocoaSDK>();
+	enabled = true;
+#elif defined(ANDROID_ENABLED)
+	internal_sdk = std::make_shared<AndroidSDK>();
 	enabled = true;
 #else
 	// Unsupported platform

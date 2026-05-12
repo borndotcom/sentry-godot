@@ -21,6 +21,11 @@
 #include "sentry/cocoa/cocoa_event.h"
 #endif // COCOA_SDK
 
+#ifdef ANDROID_ENABLED
+#include "sentry/android/android_event.h"
+#include "sentry/android/android_sdk.h"
+#endif // ANDROID_ENABLED
+
 using namespace godot;
 
 namespace {
@@ -66,6 +71,10 @@ void sentry_godot_initialize_module(ModuleInitializationLevel p_level) {
 #ifdef COCOA_SDK
 		GDREGISTER_INTERNAL_CLASS(sentry::CocoaEvent);
 #endif // COCOA_SDK
+#ifdef ANDROID_ENABLED
+		GDREGISTER_INTERNAL_CLASS(sentry::AndroidEvent);
+		GDREGISTER_INTERNAL_CLASS(sentry::SentryAndroidBeforeSendHandler);
+#endif // ANDROID_ENABLED
 
 		sentry::SentryOptions::create_singleton();
 
